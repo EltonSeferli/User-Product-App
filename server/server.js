@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const sequelize = require("./config/db_connection");
 
 dotenv.config();
 
@@ -14,9 +15,19 @@ app.get("/", (req, res) => {
   res.send({ message: "Hi elton" });
 });
 
-const start = () => {
-  app.listen(PORT, () => {
-    console.log("Listening ", PORT);
-  });
+const start = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("DB connected");
+    // await sequelize.sync({ alter: true });
+    console.log("Models synced");
+
+    app.listen(PORT, () => {
+      console.log("Server listening ", PORT);
+    });
+  } catch (err) {
+    console.log("Failed to connect database");
+    process.exit(1);
+  }
 };
 start();
