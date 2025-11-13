@@ -2,10 +2,10 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-const Layout = ({ children }) => {
+const Layout = ({ isAuthorized, children }) => {
   return (
     <div className="app-root">
-      <Header />
+      <Header isAuthorized={isAuthorized} />
       <main className="container main-content">{children}</main>
       <Footer />
     </div>

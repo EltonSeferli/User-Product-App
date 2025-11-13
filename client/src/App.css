@@ -113,6 +113,10 @@ body {
   gap: 12px;
   margin-top: 12px;
 }
+.error_msg {
+  color: rgba(255, 0, 0, 0.345);
+  font-size: 13px;
+}
 .form label {
   display: flex;
   flex-direction: column;

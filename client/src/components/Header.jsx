@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ isAuthorized }) => {
+  console.log(isAuthorized);
+  if (isAuthorized) {
+    console.log("auto");
+  }
   return (
     <header className="site-header">
       <div className="container header-inner">
