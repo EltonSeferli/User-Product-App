@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const sequelize = require("./config/db_connection");
 
+const userRoutes = require("./routes/authRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+
 dotenv.config();
 
 const app = express();
@@ -11,15 +14,14 @@ app.use(cors());
 
 const PORT = process.env.PORT || 5050;
 
-app.get("/", (req, res) => {
-  res.send({ message: "Hi elton" });
-});
+app.use("/api/users", userRoutes);
+app.use("/api/cpntacts", contactRoutes);
 
 const start = async () => {
   try {
     await sequelize.authenticate();
     console.log("DB connected");
-    // await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: true });
     console.log("Models synced");
 
     app.listen(PORT, () => {
