@@ -1,22 +1,23 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
-import Products from "./pages/products/Products";
-import Product_detail from "./pages/product_detail/Product_detail";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
-import AddProduct from "./pages/products/AddProduct";
-import EditProduct from "./pages/products/EditProduct";
 import Layout from "./components/Layout";
 import { useState } from "react";
 import { useEffect } from "react";
+import Contacts from "./pages/contacts/Contacts";
+import AddContact from "./pages/contacts/AddContact";
+import EditContact from "./pages/contacts/EditContact";
+import Contact_detail from "./pages/contact_detail/Contact_detail";
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const location = useLocation();
   useEffect(() => {
     const token = localStorage.getItem("token");
     const current_user = JSON.parse(localStorage.getItem("current_user"));
     setIsAuthorized(!!token && !!current_user);
-  }, []);
+  }, [location]);
 
   const ProtectedRoute = ({ children }) => {
     if (!isAuthorized) {
@@ -62,7 +63,7 @@ function App() {
             <Layout isAuthorized={isAuthorized}>
               {" "}
               <ProtectedRoute>
-                <Products />{" "}
+                <Contacts />{" "}
               </ProtectedRoute>
             </Layout>
           }
@@ -73,7 +74,7 @@ function App() {
             <Layout isAuthorized={isAuthorized}>
               {" "}
               <ProtectedRoute>
-                <AddProduct />{" "}
+                <AddContact />{" "}
               </ProtectedRoute>
             </Layout>
           }
@@ -84,7 +85,7 @@ function App() {
             <Layout isAuthorized={isAuthorized}>
               {" "}
               <ProtectedRoute>
-                <EditProduct />{" "}
+                <EditContact />{" "}
               </ProtectedRoute>
             </Layout>
           }
@@ -95,7 +96,7 @@ function App() {
             <Layout isAuthorized={isAuthorized}>
               {" "}
               <ProtectedRoute>
-                <Product_detail />{" "}
+                <Contact_detail />{" "}
               </ProtectedRoute>
             </Layout>
           }

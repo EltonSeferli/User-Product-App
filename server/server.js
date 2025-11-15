@@ -15,15 +15,19 @@ app.use(cors());
 const PORT = process.env.PORT || 5050;
 
 app.use("/api/users", userRoutes);
-app.use("/api/cpntacts", contactRoutes);
+app.use("/api/contacts", contactRoutes);
 
 const start = async () => {
   try {
     await sequelize.authenticate();
     console.log("DB connected");
-    await sequelize.sync({ alter: true });
-    console.log("Models synced");
-
+    try {
+      await sequelize.sync({ alter: true });
+      console.log("Models synced");
+    } catch (syncError) {
+      console.log("Model sync failed:", syncError.message);
+      console.log("Continuing with server start despite sync errors...");
+    }
     app.listen(PORT, () => {
       console.log("Server listening ", PORT);
     });

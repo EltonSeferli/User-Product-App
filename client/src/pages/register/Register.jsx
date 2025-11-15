@@ -18,7 +18,6 @@ function Register() {
     setError("");
     setSuccess("");
     setLoading(true);
-    console.log({ username, email, password });
     try {
       const response = await axios.post(API_URL, { username, email, password });
       setSuccess("Account created successfully! Redirecting to login...");

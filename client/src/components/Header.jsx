@@ -2,9 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Header = ({ isAuthorized }) => {
-  console.log(isAuthorized);
-  if (isAuthorized) {
-    console.log("auto");
+  function handleLogOut() {
+    localStorage.removeItem("current_user");
+    localStorage.removeItem("token");
+    window.location.reload();
   }
   return (
     <header className="site-header">
@@ -39,12 +40,21 @@ const Header = ({ isAuthorized }) => {
           <Link to="/" className="nav-link">
             Products
           </Link>
-          <Link to="/login" className="nav-link">
-            Login
-          </Link>
-          <Link to="/register" className="nav-link button-outline">
-            Sign up
-          </Link>
+
+          {isAuthorized ? (
+            <button className="log_out_btn" onClick={handleLogOut}>
+              Log out
+            </button>
+          ) : (
+            <div>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/register" className="nav-link button-outline">
+                Sign up
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </header>

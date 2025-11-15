@@ -46,7 +46,12 @@ function Login() {
           setError("Login failed. Please check your email and password.");
         }
       } else if (err.request) {
-        setError("No response from server. Check your connection.");
+        setError([
+          {
+            param: "Network",
+            message: "No response from server. Check your connection.",
+          },
+        ]);
       } else {
         setError(err.message || "An error occurred.");
       }
@@ -56,6 +61,7 @@ function Login() {
   };
 
   function findErrorByField(field) {
+    console.log(error);
     return error.find((err) => err.param == field)?.message;
   }
   return (
