@@ -55,7 +55,7 @@ function Contacts() {
 
         <div>
           <button className="button primary" onClick={() => navigate("/add")}>
-            + Add product
+            + Add contact
           </button>
         </div>
       </div>
