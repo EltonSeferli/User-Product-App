@@ -22,7 +22,7 @@ function Contact_detail() {
       <div className="detail-grid">
         <div className="detail-thumb" />
         <div>
-          <h2>Product #{id}</h2>
+          <h2>Contact #{id}</h2>
           <p className="muted">
             Email Address: <strong>{contact.email}</strong>.
           </p>

@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
-        <p>© {new Date().getFullYear()} Shoply — built with ❤️</p>
+        <p>© {new Date().getFullYear()} — built with Elton Seferli</p>
         <small>Simple demo UI for the CRUD app</small>
       </div>
     </footer>

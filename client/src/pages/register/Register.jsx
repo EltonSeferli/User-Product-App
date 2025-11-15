@@ -6,7 +6,7 @@ function Register() {
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -15,40 +15,38 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrors([]);
     setSuccess("");
     setLoading(true);
     try {
       const response = await axios.post(API_URL, { username, email, password });
       setSuccess("Account created successfully! Redirecting to login...");
-      const { token, user } = response.data;
       setUserName("");
       setEmail("");
       setPassword("");
-      localStorage.setItem("current_user", JSON.stringify(user));
-      localStorage.setItem("token", JSON.stringify(token));
-      // Redirect to login after 2 seconds
-      // setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       console.log(err);
       // Handle validation or server errors
-      if (err.response && err.response.data) {
+      if (err.response?.data) {
         const errorData = err.response.data;
         if (errorData.errors && Array.isArray(errorData.errors)) {
-          // Multiple validation errors from Joi
-          const messages = errorData.errors.map((e) => e.message).join("\n");
-
-          setError(errorData.errors);
+          setErrors(errorData.errors);
+        } else if (errorData.param && errorData.message) {
+          setErrors(errorData);
         } else if (errorData.message) {
-          setError(errorData);
-          console.log(errorData);
+          setErrors([{ message: errorData.message }]);
         } else {
-          setError("Registration failed. Please try again.");
+          setErrors([{ message: "Registration failed. Please try again." }]);
         }
       } else if (err.request) {
-        setError("No response from server. Check your connection.");
+        setErrors([
+          { message: "No response from server. Check your connection." },
+        ]);
       } else {
-        setError(err.message || "An error occurred.");
+        setErrors([
+          { message: err.message || "An unexpected error occurred." },
+        ]);
       }
     } finally {
       setLoading(false);
@@ -56,7 +54,13 @@ function Register() {
   };
 
   function findErrorByField(field) {
-    return error.find((err) => err.param == field)?.message;
+    if (!Array.isArray(errors)) return null;
+    const fieldError = errors.find((err) => err.param === field);
+    return fieldError?.message;
+  }
+  function getGeneralErrors() {
+    if (!Array.isArray(errors)) return [];
+    return errors.filter((err) => !err.param || err.param === "general");
   }
   return (
     <section className="card auth-card">
@@ -76,6 +80,11 @@ function Register() {
           ✓ {success}
         </div>
       )}
+      {getGeneralErrors().map((error, index) => (
+        <div key={index} className="error_msg">
+          ⚠ {error.message}
+        </div>
+      ))}
 
       <form onSubmit={handleSubmit} className="form">
         <label>
@@ -87,7 +96,7 @@ function Register() {
             disabled={loading}
           />
         </label>
-        {error && (
+        {errors && (
           <div className="error_msg">{findErrorByField("username")}</div>
         )}
 
@@ -101,7 +110,7 @@ function Register() {
             disabled={loading}
           />
         </label>
-        {error && <div className="error_msg">{findErrorByField("email")}</div>}
+        {errors && <div className="error_msg">{findErrorByField("email")}</div>}
         <label>
           Password
           <input
@@ -112,7 +121,7 @@ function Register() {
             disabled={loading}
           />
         </label>
-        {error && (
+        {errors && (
           <div className="error_msg">{findErrorByField("password")}</div>
         )}
         <button className="button primary" type="submit" disabled={loading}>

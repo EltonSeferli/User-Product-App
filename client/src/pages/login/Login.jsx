@@ -5,7 +5,7 @@ import axios from "axios";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrors([]);
     setSuccess("");
     setLoading(true);
 
@@ -34,26 +34,26 @@ function Login() {
       // Redirect to products after 1.5 seconds
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      // Handle validation or server errors
-      if (err.response && err.response.data) {
+      console.log(err);
+      if (err.response?.data) {
         const errorData = err.response.data;
         if (errorData.errors && Array.isArray(errorData.errors)) {
-          // Multiple validation errors from Joi
-          setError(errorData.errors);
+          setErrors(errorData.errors);
+        } else if (errorData.param && errorData.message) {
+          setErrors(errorData);
         } else if (errorData.message) {
-          setError(errorData.message);
+          setErrors([{ message: errorData.message }]);
         } else {
-          setError("Login failed. Please check your email and password.");
+          setErrors([{ message: "Registration failed. Please try again." }]);
         }
       } else if (err.request) {
-        setError([
-          {
-            param: "Network",
-            message: "No response from server. Check your connection.",
-          },
+        setErrors([
+          { message: "No response from server. Check your connection." },
         ]);
       } else {
-        setError(err.message || "An error occurred.");
+        setErrors([
+          { message: err.message || "An unexpected error occurred." },
+        ]);
       }
     } finally {
       setLoading(false);
@@ -61,8 +61,13 @@ function Login() {
   };
 
   function findErrorByField(field) {
-    console.log(error);
-    return error.find((err) => err.param == field)?.message;
+    if (!Array.isArray(errors)) return null;
+    const fieldError = errors.find((err) => err.param === field);
+    return fieldError?.message;
+  }
+  function getGeneralErrors() {
+    if (!Array.isArray(errors)) return [];
+    return errors.filter((err) => !err.param || err.param === "general");
   }
   return (
     <section className="card auth-card">
@@ -82,6 +87,11 @@ function Login() {
           ✓ {success}
         </div>
       )}
+      {getGeneralErrors().map((error, index) => (
+        <div key={index} className="error_msg">
+          ⚠ {error.message}
+        </div>
+      ))}
 
       <form onSubmit={handleSubmit} className="form">
         <label>
@@ -94,7 +104,7 @@ function Login() {
             disabled={loading}
           />
         </label>
-        {error && <div className="error_msg">{findErrorByField("email")}</div>}
+        {errors && <div className="error_msg">{findErrorByField("email")}</div>}
         <label>
           Password
           <input
@@ -105,7 +115,7 @@ function Login() {
             disabled={loading}
           />
         </label>
-        {error && (
+        {errors && (
           <div className="error_msg">{findErrorByField("password")}</div>
         )}
 
